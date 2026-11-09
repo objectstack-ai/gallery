@@ -35,8 +35,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # The objectstack-ai/objectstack main commit that merged `export-gallery --check`.
-  OBJECTSTACK_SHA: OBJECTSTACK_MERGE_SHA_PLACEHOLDER
+  # The objectstack-ai/objectstack main commit that merged `export-gallery --check` (PR #31748).
+  OBJECTSTACK_SHA: c2bb879fe71c16bd1d0b42708109efb7f6543d5d
 
 jobs:
   check:
