@@ -28,6 +28,10 @@ The apps are general business functions, not industry verticals: sales, service,
 - **Run it locally.** Start a project with `npm create objectstack` and copy the app's metadata in. Run `os validate` and `os verify`, then start it with `os dev`.
 - **Try it in ObjectOS cloud.** A one-click trial is planned.
 
+## How content arrives
+
+The content is generated. The normal path is a pull request opened by the scheduled export task after each ObjectStack release, which the maintainer reviews and merges. Every pull request must pass the gallery check (`.github/workflows/gallery-check.yml`), which fails on an `index.json` that does not match the exporter's schema, an incomplete or unlisted app directory, a stray `.env` file, `node_modules` directory or local path, or a framework version that is not a published release. Hand edits belong in `apps/README.md` only.
+
 ## What this repository is not
 
 - Not hand-maintained. Every file under `apps/` and `index.json` is generated, and a hand edit is overwritten on the next release.
@@ -56,4 +60,4 @@ Apache-2.0. See [LICENSE](./LICENSE).
 
 覆盖的是通用职能场景，暂不按行业细分：销售、客服、采购与供应链、财务、人事、行政、项目、法务。
 
-本仓库的内容全部由产线生成，手工修改会在下次发版时被覆盖。毕业到应用市场的入门模板以**非受管**方式安装：装上之后，那份应用归你所有。
+本仓库的内容全部由产线生成，手工修改会在下次发版时被覆盖。正常的更新途径是：每次 ObjectStack 发版后由定时导出任务开一个 PR，维护者审阅后合并。每个 PR 都必须通过画廊检查（`.github/workflows/gallery-check.yml`）。手工修改只放在 `apps/README.md`。毕业到应用市场的入门模板以**非受管**方式安装：装上之后，那份应用归你所有。

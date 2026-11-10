@@ -1,0 +1,80 @@
+# Gallery check: every PR on this repository must pass `export-gallery --check`
+# before it is merged (objectstack-ai/objectstack#31122). The check lives with
+# the exporter in objectstack-ai/objectstack (packages/qa/scenarios,
+# src/export/check.ts), so what the exporter writes and what this workflow
+# accepts cannot drift. It fails the PR, one line per finding, when:
+#   - index.json does not match the exporter's schema;
+#   - an index entry has no complete apps/ID/ directory (source, run record,
+#     scorecard, transcript, at least one screenshot), or a directory under
+#     apps/ is not listed;
+#   - a .env* name, a node_modules directory, a symbolic link or a local
+#     absolute path appears anywhere in the tree;
+#   - an app's framework.version is not a stable @objectstack/cli release
+#     published on npm (read with `npm view @objectstack/cli versions`).
+#
+# It only reads: the token is contents: read, nothing is pushed or commented,
+# and no file from the PR is executed.
+#
+# Until a release publishes @objectstack/scenarios with --check, the checker
+# runs from source: objectstack-ai/objectstack checked out at the pinned commit
+# OBJECTSTACK_SHA (a full SHA on its main, never a branch). Once a release
+# carries it, replace the checkout, install and build steps with one step,
+# `npx --yes @objectstack/scenarios@VERSION export-gallery --check .`, pinned
+# to that exact version, and drop OBJECTSTACK_SHA.
+
+name: Gallery check
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gallery-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # The objectstack-ai/objectstack main commit that merged `export-gallery --check` (PR #31748).
+  OBJECTSTACK_SHA: c2bb879fe71c16bd1d0b42708109efb7f6543d5d
+
+jobs:
+  check:
+    name: Gallery check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out this PR
+        uses: actions/checkout@v7
+        with:
+          path: gallery
+          persist-credentials: false
+
+      - name: Check out the checker (objectstack at the pinned commit)
+        uses: actions/checkout@v7
+        with:
+          repository: objectstack-ai/objectstack
+          ref: ${{ env.OBJECTSTACK_SHA }}
+          path: objectstack
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: objectstack/.nvmrc
+
+      - name: Install the checker's dependencies
+        working-directory: objectstack
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile --filter '@objectstack/scenarios...'
+
+      - name: Build the packages the checker imports
+        working-directory: objectstack
+        env:
+          OS_SKIP_DTS: '1'
+        run: pnpm --filter '@objectstack/scenarios^...' build
+
+      - name: export-gallery --check
+        working-directory: objectstack
+        run: pnpm --filter @objectstack/scenarios export-gallery --check "$GITHUB_WORKSPACE/gallery"
