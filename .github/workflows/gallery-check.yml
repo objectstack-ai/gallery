@@ -13,14 +13,22 @@
 #     published on npm (read with `npm view @objectstack/cli versions`).
 #
 # It only reads: the token is contents: read, nothing is pushed or commented,
-# and no file from the PR is executed.
+# and no file from the PR is executed. npx runs outside the checkout (in the
+# runner's temp directory), so a .npmrc or package.json in the PR cannot
+# change where the checker is fetched from or what runs; the tree is only read.
 #
-# Until a release publishes @objectstack/scenarios with --check, the checker
-# runs from source: objectstack-ai/objectstack checked out at the pinned commit
-# OBJECTSTACK_SHA (a full SHA on its main, never a branch). Once a release
-# carries it, replace the checkout, install and build steps with one step,
-# `npx --yes @objectstack/scenarios@VERSION export-gallery --check .`, pinned
-# to that exact version, and drop OBJECTSTACK_SHA.
+# The checker is the published @objectstack/scenarios package, run with npx at
+# one exact version (the last step). Never `latest` and never a
+# range: a release that changes the checker must not change what this required
+# check accepts without a PR here.
+#
+# Version-pin rule: the pin moves when an objectstack release changes the
+# checker (src/export/check.ts, check-cli.ts) or the index schema
+# (src/export/manifest.ts). The PR that moves it is that release's
+# gallery-refresh PR (its export/VERSION branch), which then runs the checker
+# of the release it was exported with. A release that changes the checker but
+# exports nothing moves the pin in a separate PR here. Either PR's own
+# Gallery check run is the proof the new pin reads the tree as clean.
 
 name: Gallery check
 
@@ -34,15 +42,11 @@ concurrency:
   group: gallery-check-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
-env:
-  # The objectstack-ai/objectstack main commit that merged `export-gallery --check` (PR #31748).
-  OBJECTSTACK_SHA: c2bb879fe71c16bd1d0b42708109efb7f6543d5d
-
 jobs:
   check:
     name: Gallery check
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - name: Check out this PR
         uses: actions/checkout@v7
@@ -50,31 +54,13 @@ jobs:
           path: gallery
           persist-credentials: false
 
-      - name: Check out the checker (objectstack at the pinned commit)
-        uses: actions/checkout@v7
-        with:
-          repository: objectstack-ai/objectstack
-          ref: ${{ env.OBJECTSTACK_SHA }}
-          path: objectstack
-          persist-credentials: false
-
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
-          node-version-file: objectstack/.nvmrc
-
-      - name: Install the checker's dependencies
-        working-directory: objectstack
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile --filter '@objectstack/scenarios...'
-
-      - name: Build the packages the checker imports
-        working-directory: objectstack
-        env:
-          OS_SKIP_DTS: '1'
-        run: pnpm --filter '@objectstack/scenarios^...' build
+          # @objectstack/scenarios declares engines.node >=22.0.0.
+          node-version: '22'
 
       - name: export-gallery --check
-        working-directory: objectstack
-        run: pnpm --filter @objectstack/scenarios export-gallery --check "$GITHUB_WORKSPACE/gallery"
+        # The pinned checker: one exact version (see the version-pin rule above).
+        working-directory: ${{ runner.temp }}
+        run: npx --yes @objectstack/scenarios@18.4.0 export-gallery --check "$GITHUB_WORKSPACE/gallery"
