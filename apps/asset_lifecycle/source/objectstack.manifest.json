@@ -1,0 +1,6 @@
+{
+  "$schema": "https://schemas.objectstack.dev/template-manifest.json",
+  "namespace": "demoasset",
+  "displayName": "Demoasset",
+  "readmePath": "README.md"
+}

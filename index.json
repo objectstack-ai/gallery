@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "apps": [
+    {
+      "id": "asset_lifecycle",
+      "code": "asset",
+      "namespace": "demoasset",
+      "path": "apps/asset_lifecycle",
+      "function": "administration",
+      "title": {
+        "en": "Asset lifecycle: register, checkout and return, repairs, monthly depreciation and a scrap approval",
+        "zh": "固定资产全生命周期:资产登记、领用与归还、维修、按月折旧和报废审批"
+      },
+      "summary": {
+        "en": "Build a fixed-asset lifecycle app: an asset register, checkout and return, repairs, monthly depreciation and a scrap approval.",
+        "zh": "做一个固定资产全生命周期应用:资产登记、领用与归还、维修、按月折旧、报废审批。"
+      },
+      "capabilities": [
+        "access-security.field-permissions",
+        "access-security.row-level-security",
+        "access-security.row-scope",
+        "ai.agent-actions",
+        "ai.ask-data",
+        "automation.record-triggered-flow",
+        "automation.scheduled-flow",
+        "dashboards.report",
+        "records-forms.formula-field",
+        "records-forms.roll-up-summary",
+        "records-forms.select-options",
+        "records-forms.validation-rule"
+      ],
+      "screenshots": [
+        {
+          "kind": "list",
+          "path": "apps/asset_lifecycle/screenshots/list.png",
+          "object": "demoasset_asset"
+        },
+        {
+          "kind": "record",
+          "path": "apps/asset_lifecycle/screenshots/record.png",
+          "object": "demoasset_asset"
+        },
+        {
+          "kind": "dashboard",
+          "path": "apps/asset_lifecycle/screenshots/dashboard.png",
+          "view": "demoasset_asset_value_by_category"
+        }
+      ],
+      "qa": {
+        "questions": 10,
+        "turns": 15,
+        "personas": 3
+      },
+      "operations": 6,
+      "framework": {
+        "version": "18.5.0",
+        "runner": "fff0ad0c1"
+      },
+      "runDate": "2026-11-17",
+      "run": "2026-11-17-scenario-asset_lifecycle"
+    }
+  ]
+}

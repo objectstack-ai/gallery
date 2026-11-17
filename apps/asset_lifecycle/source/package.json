@@ -1,0 +1,38 @@
+{
+  "name": "demoasset",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "pnpm": ">=10.15"
+  },
+  "scripts": {
+    "dev": "objectstack dev",
+    "start": "objectstack start",
+    "build": "objectstack build",
+    "deploy": "objectstack deploy",
+    "validate": "objectstack validate",
+    "lint": "objectstack lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@objectstack/spec": "18.5.0",
+    "@objectstack/runtime": "18.5.0",
+    "@objectstack/plugin-hono-server": "18.5.0",
+    "@objectstack/connector-rest": "18.5.0",
+    "@objectstack/connector-openapi": "18.5.0",
+    "@objectstack/connector-mcp": "18.5.0"
+  },
+  "devDependencies": {
+    "@objectstack/cli": "18.5.0",
+    "@objectstack/skills": "18.5.0",
+    "@objectstack/verify": "18.5.0",
+    "typescript": "^5.3.0",
+    "vitest": "~4.1.12"
+  },
+  "overrides": {
+    "vitest": "~4.1.12",
+    "uuid@<12.0.0": "^11.1.1"
+  }
+}
