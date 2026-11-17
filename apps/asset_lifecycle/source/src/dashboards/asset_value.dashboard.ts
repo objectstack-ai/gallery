@@ -1,0 +1,75 @@
+import type { Dashboard } from '@objectstack/spec/ui';
+
+export const AssetValueByCategoryDashboard: Dashboard = {
+  name: 'demoasset_asset_value_by_category',
+  label: 'Asset Value by Category',
+  description: 'What the asset register is worth: count and book value by category and department.',
+  columns: 12,
+  gap: 4,
+  // Optional window on the purchase date ("what did we buy last quarter?").
+  // It opens with no window applied, so the dashboard shows the whole register.
+  dateRange: { field: 'purchase_date', defaultRange: 'custom', allowCustomRange: true },
+  widgets: [
+    {
+      id: 'assets_total',
+      type: 'metric',
+      title: 'Assets',
+      dataset: 'asset_value',
+      values: ['asset_count'],
+      layout: { x: 0, y: 0, w: 3, h: 2 },
+    },
+    {
+      id: 'purchase_cost_total',
+      type: 'metric',
+      title: 'Purchase Cost',
+      dataset: 'asset_value',
+      values: ['purchase_cost_sum'],
+      layout: { x: 3, y: 0, w: 3, h: 2 },
+    },
+    {
+      id: 'depreciation_total',
+      type: 'metric',
+      title: 'Accumulated Depreciation',
+      dataset: 'asset_value',
+      values: ['accumulated_depreciation_sum'],
+      layout: { x: 6, y: 0, w: 3, h: 2 },
+    },
+    {
+      id: 'book_value_total',
+      type: 'metric',
+      title: 'Book Value',
+      dataset: 'asset_value',
+      values: ['book_value_sum'],
+      colorVariant: 'success',
+      layout: { x: 9, y: 0, w: 3, h: 2 },
+    },
+    {
+      id: 'book_value_by_category',
+      type: 'bar',
+      title: 'Book Value by Category',
+      dataset: 'asset_value',
+      dimensions: ['category'],
+      values: ['book_value_sum'],
+      options: { sortBy: 'book_value_sum', sortOrder: 'desc' },
+      layout: { x: 0, y: 2, w: 6, h: 4 },
+    },
+    {
+      id: 'assets_by_status',
+      type: 'donut',
+      title: 'Assets by Status',
+      dataset: 'asset_value',
+      dimensions: ['status'],
+      values: ['asset_count'],
+      layout: { x: 6, y: 2, w: 6, h: 4 },
+    },
+    {
+      id: 'value_by_category_department',
+      type: 'pivot',
+      title: 'Asset Count and Book Value by Category and Department',
+      dataset: 'asset_value',
+      dimensions: ['category', 'department'],
+      values: ['asset_count', 'book_value_sum'],
+      layout: { x: 0, y: 6, w: 12, h: 5 },
+    },
+  ],
+};

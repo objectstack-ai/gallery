@@ -1,0 +1,9 @@
+export { Department } from './department.object.js';
+export { Employee } from './employee.object.js';
+export { AssetCategory } from './asset_category.object.js';
+export { Asset } from './asset.object.js';
+export { Checkout } from './checkout.object.js';
+export { RepairOrder } from './repair_order.object.js';
+export { DisposalRequest } from './disposal_request.object.js';
+export { DepreciationEntry } from './depreciation_entry.object.js';
+export { AssetTransfer } from './asset_transfer.object.js';
